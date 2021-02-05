@@ -7,7 +7,8 @@ This is a collection of image process and alaysis scripts to process basic image
 ### What Do I need to use these scripts?
 Pretty much any new-ish computer should work.  As I mention below, these are tested on a Mac, so your mileage may vary on other systems.  Most scripts I'll put here may rely on 3rd party packages, but they'll almost always be open source (and free!)
 
-I like to use the homebrew package manager to install these on my Mac: [brew.sh](https://brew.sh).  apt is a similar choice on Linux.
+I like to use the homebrew package manager to install these on my Mac: [brew.sh](https://brew.sh).  
+[apt](https://en.wikipedia.org/wiki/APT_(software)) is a similar choice on Linux.
 
 ### Caveats
 I've written and tested these scripts completely on my own computer.  As of this note (2/5/21) that's a Mac running macOS 11.1.
