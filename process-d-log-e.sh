@@ -21,7 +21,7 @@ checkForRequiredTool() {
 
 # Check for gnuplot and imagemagick
 checkForRequiredTool gnuplot
-checkForRequiredTool magick
+checkForRequiredTool identify
 
 
 while [ "$1" != "" ]; do
