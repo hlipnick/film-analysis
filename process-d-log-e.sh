@@ -19,9 +19,10 @@ checkForRequiredTool() {
     fi
 }
 
-# Check for gnuplot and imagemagick
+# Check for gnuplot, ImageMagick's identify and bc
 checkForRequiredTool gnuplot
 checkForRequiredTool identify
+checkForRequiredTool bc
 
 
 while [ "$1" != "" ]; do
@@ -104,7 +105,7 @@ graphOutput="$outputDirectory/values.png";
 echo "R,G,B" > $outputFile;
 
 # Loop through input files to derive R, G, B values (multiplied by 100) from gray card cropping area
-$n=0;
+n=0;
 for inputFile in *;
     do
     n=$((n+1))
