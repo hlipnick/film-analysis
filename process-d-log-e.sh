@@ -21,7 +21,7 @@ checkForRequiredTool() {
 
 # Check for gnuplot, ImageMagick's identify and bc
 checkForRequiredTool gnuplot
-checkForRequiredTool identify
+checkForRequiredTool convert
 checkForRequiredTool bc
 
 
@@ -59,12 +59,12 @@ if [ -z "$cropX" ]; then read -p "Enter Gray Card Cropping Square X (pixels offs
 if [ -z "$cropY" ]; then read -p "Enter Gray Card Cropping Square Y (pixels offset from top left corner of image): " cropY; fi
 
 # Exit Script if Required Parameters Not Provided
-# if [ -z "$inputDirectory" ]; then echo "No input directory was provided.  Script cannot continue without it.  Exiting now."; exit; fi
-# if [ -z "$outputDirectory" ]; then echo "No output directory was provided.  Script cannot continue without it.  Exiting now."; exit; fi
-# if [ -z "$cropWidth" ]; then echo "No crop width was provided.  Script cannot continue without it.  Exiting now."; exit; fi
-# if [ -z "$cropHeight" ]; then echo "No crop height was provided.  Script cannot continue without it.  Exiting now."; exit; fi
-# if [ -z "$cropX" ]; then echo "No crop X was provided.  Script cannot continue without it.  Exiting now."; exit; fi
-# if [ -z "$cropY" ]; then echo "No crop Y was provided.  Script cannot continue without it.  Exiting now."; exit; fi
+if [ -z "$inputDirectory" ]; then echo "No input directory was provided.  Script cannot continue without it.  Exiting now."; exit; fi
+if [ -z "$outputDirectory" ]; then echo "No output directory was provided.  Script cannot continue without it.  Exiting now."; exit; fi
+if [ -z "$cropWidth" ]; then echo "No crop width was provided.  Script cannot continue without it.  Exiting now."; exit; fi
+if [ -z "$cropHeight" ]; then echo "No crop height was provided.  Script cannot continue without it.  Exiting now."; exit; fi
+if [ -z "$cropX" ]; then echo "No crop X was provided.  Script cannot continue without it.  Exiting now."; exit; fi
+if [ -z "$cropY" ]; then echo "No crop Y was provided.  Script cannot continue without it.  Exiting now."; exit; fi
 
 #######
 
@@ -104,20 +104,42 @@ graphOutput="$outputDirectory/values.png";
 # Write Columns Headings to Output File
 echo "R,G,B" > $outputFile;
 
+# Define Function for Getting Channel Value
+channelValue() {
+    image="$1"
+    channel="$2"
+    cropRect="$3"
+
+    # Derive Channel Value using ImageMagick's Convert
+    channelValue=$(convert "$image" -crop "$cropRect" -channel $channel -format "%[fx:mean]\n" info: )
+
+    # Multiply Channel Value by 100 to Support Graphing on scale 0-100
+    channelValue=$(echo "$channelValue*100" | bc)
+
+}
+
 # Loop through input files to derive R, G, B values (multiplied by 100) from gray card cropping area
 n=0;
 for inputFile in *;
     do
     n=$((n+1))
     echo "Processing file $n of $inputCount ($inputFile)..."
-    r=$(identify -crop "$cropRect" -channel R -format "%[fx:mean]\n" "$inputFile");
+
+    # Get Gray Card Value
+    r=$(convert "$inputFile" -crop "$cropRect" -channel R -format "%[fx:mean]\n" info:)
+    g=$(convert "$inputFile" -crop "$cropRect" -channel G -format "%[fx:mean]\n" info:)
+    b=$(convert "$inputFile" -crop "$cropRect" -channel B -format "%[fx:mean]\n" info:)
+
+    # Multiply Values by 100
     r=$(echo "$r*100" | bc);
-    g=$(identify -crop "$cropRect" -channel G -format "%[fx:mean]\n" "$inputFile");
     g=$(echo "$g*100" | bc);
-    b=$(identify -crop "$cropRect" -channel B -format "%[fx:mean]\n" "$inputFile");
     b=$(echo "$b*100" | bc);
-    outputLine="$r,$g,$b"
-    echo "$outputLine" >> "$outputFile"
+
+    # Log dervied values to command output
+    echo "  R: $r G: $g B: $b"
+
+    # Write Values to Output File
+    echo "$r,$g,$b" >> "$outputFile"
 done;
 
 # Define Graph Output Parameteres for GNUPlot and write to temporary file gnu.plot
