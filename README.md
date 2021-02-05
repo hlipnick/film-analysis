@@ -10,6 +10,8 @@ Pretty much any new-ish computer should work.  As I mention below, these are tes
 I like to use the homebrew package manager to install these on my Mac: [brew.sh](https://brew.sh).  
 [apt](https://en.wikipedia.org/wiki/APT_(software)) is a similar choice on Linux.
 
+With careful setup, some of these scripts may even run on a [Raspberry Pi](https://www.raspberrypi.org)
+
 ### Caveats
 I've written and tested these scripts completely on my own computer.  As of this note (2/5/21) that's a Mac running macOS 11.1.
 
